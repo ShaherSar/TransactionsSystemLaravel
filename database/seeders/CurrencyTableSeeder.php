@@ -14,10 +14,10 @@ class CurrencyTableSeeder extends Seeder{
     public function run(){
         //from currency to jod
         DB::table('currencies')->insert([
-            ['name'=>'USD','conversion_rate'=>0.71],
-            ['name'=>'EUR','conversion_rate'=>0.80],
-            ['name'=>'AUD','conversion_rate'=>0.50],
-            ['name'=>'TRY','conversion_rate'=>0.052],
+            ['name'=>'USD','conversion_rate'=>0.71,'created_at'=>now(),'updated_at'=>now()],
+            ['name'=>'EUR','conversion_rate'=>0.80,'created_at'=>now(),'updated_at'=>now()],
+            ['name'=>'AUD','conversion_rate'=>0.50,'created_at'=>now(),'updated_at'=>now()],
+            ['name'=>'TRY','conversion_rate'=>0.052,'created_at'=>now(),'updated_at'=>now()],
         ]);
     }
 }

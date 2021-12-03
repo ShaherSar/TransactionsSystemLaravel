@@ -19,13 +19,21 @@ class TransactionController extends Controller{
     public function store(Request $request){
         $postFields = $request->all();
 
-        $paymentMethod = PaymentMethod::query()->find($postFields['payment_method_id']);
+        $paymentMethod = PaymentMethod::query()->with('currencies')->find($postFields['payment_method_id']);
+
+        $currencies = $paymentMethod->currencies->map(function ($value){
+            return $value->pivot->currency_id;
+        })->toArray();
 
         $minimum_amount = ($postFields['type'] == 'Deposit') ? $paymentMethod->minimum_deposit:$paymentMethod->minimum_withdrawal;
         $maximum_amount = ($postFields['type'] == 'Deposit') ? $paymentMethod->maximum_deposit:$paymentMethod->maximum_withdrawal;
 
         $validator = Validator::make($postFields, [
             'payment_method_id' => 'required|max:255',
+            'currency_id'=>[
+                'required',
+                Rule::in($currencies)
+            ],
             'type'=>[
                 'required',
                 Rule::in(config('enum.transactions.type')),

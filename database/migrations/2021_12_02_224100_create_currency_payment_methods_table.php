@@ -11,7 +11,7 @@ class CreateCurrencyPaymentMethodsTable extends Migration{
      * @return void
      */
     public function up(){
-        Schema::create('currency_payment_methods', function (Blueprint $table) {
+        Schema::create('currency_payment_method', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('currency_id');
             $table->unsignedBigInteger('payment_method_id');

@@ -14,22 +14,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return auth()->user();
-});
-
 Route::post('/login',['\App\Http\Controllers\AuthController','login']);
 Route::post('/register',['\App\Http\Controllers\AuthController','register']);
 
 Route::middleware('auth:sanctum')->group(function (){
+    Route::get('/user',['App\Http\Controllers\AuthController','show']);
 
     Route::get('/payment-methods',['\App\Http\Controllers\PaymentMethodController','index']);
     Route::post('/payment-methods/store',['\App\Http\Controllers\PaymentMethodController','store']);
     Route::get('/payment-methods/{id}',['\App\Http\Controllers\PaymentMethodController','show']);
 
-    Route::get('/transactions',['\App\Http\Controllers\TransactionController','index']);
     Route::post('/transactions/store',['\App\Http\Controllers\TransactionController','store']);
+
+    Route::get('/transactions',['\App\Http\Controllers\TransactionController','index']);
     Route::post('/transactions/update',['\App\Http\Controllers\TransactionController','update']);
 
     Route::get('/users',['\App\Http\Controllers\UserController','index']);
+    Route::post('/users/update',['\App\Http\Controllers\UserController','update']);
 });

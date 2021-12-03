@@ -9,6 +9,9 @@ return [
         ),
     ),
     'users'=>array(
+        'role'=>array(
+            'Client','Admin'
+        ),
         'status'=>array(
             'Active','InActive','Blocked'
         )

@@ -14,13 +14,22 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller{
 
+    public function show(Request $request){
+        $data = User::query()->with('wallet.transactions')->find(auth()->user()->id);
+        return response()->json($data);
+    }
+
     public function login(LoginRequest $request){
         $postFields = $request->all();
 
         $user = User::query()->where('email', $postFields['email'])->first();
 
         if (! $user || ! Hash::check($postFields['password'], $user->password)) {
-            return response()->json(['errors'=>['The provided credentials are incorrect.']]);
+            return response()->json([
+                'errors'=>[
+                    'The provided credentials are incorrect.'
+                ]
+            ]);
         }
 
         return $user->createToken($request->device_name)->plainTextToken;

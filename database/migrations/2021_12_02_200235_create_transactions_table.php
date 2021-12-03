@@ -13,8 +13,11 @@ class CreateTransactionsTable extends Migration{
     public function up(){
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger('payment_method_id');
             $table->unsignedBigInteger('wallet_id');
+            $table->unsignedBigInteger('currency_id');
+
             $table->enum('type',config('enum.transactions.type'));
             $table->enum('status',config('enum.transactions.status'))->default('Pending');
             $table->double('amount');
