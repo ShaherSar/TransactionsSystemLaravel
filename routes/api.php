@@ -25,6 +25,7 @@ Route::middleware(['auth:sanctum','active'])->group(function (){
     Route::get('/payment-methods',['\App\Http\Controllers\PaymentMethodController','index']);
     Route::get('/payment-methods/{id}',['\App\Http\Controllers\PaymentMethodController','show']);
     Route::post('/transactions/store',['\App\Http\Controllers\TransactionController','store']);
+    Route::get('/currencies',['\App\Http\Controllers\CurrencyController','index']);
 
     Route::middleware(['admin'])->group(function () {
         Route::post('/payment-methods/store',['\App\Http\Controllers\PaymentMethodController','store'])->middleware();

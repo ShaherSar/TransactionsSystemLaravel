@@ -31,7 +31,7 @@ class AuthController extends Controller{
                 ]
             ]);
         }
-
+        $user = User::query()->with('wallet.transactions')->find($user->id);
         return [
             'success'=>1,
             'user'=>$user,
