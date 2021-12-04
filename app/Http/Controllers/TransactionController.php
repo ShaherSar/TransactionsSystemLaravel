@@ -20,7 +20,11 @@ class TransactionController extends Controller{
         $postFields = $request->all();
 
         $paymentMethod = PaymentMethod::query()->with('currencies')->find($postFields['payment_method_id']);
-
+        if($paymentMethod == null){
+            return [
+                'errors'=>['Payment Method Id Not Found']
+            ];
+        }
         $currencies = $paymentMethod->currencies->map(function ($value){
             return $value->pivot->currency_id;
         })->toArray();
@@ -38,7 +42,7 @@ class TransactionController extends Controller{
                 'required',
                 Rule::in(config('enum.transactions.type')),
             ],
-            'amount'=>'required|integer|min:.'.$minimum_amount.'|max:'.$maximum_amount,
+            'amount'=>'required|numeric|min:.'.$minimum_amount.'|max:'.$maximum_amount,
         ]);
 
         if ($validator->fails()) {
@@ -50,12 +54,38 @@ class TransactionController extends Controller{
         $transcation->wallet_id = auth()->user()->wallet->id;
         $transcation->save();
 
+        $transcation = Transaction::query()->with([
+            'wallet',
+            'currency'
+        ])->find($transcation->id);
+
         return response()->json($transcation);
     }
 
     public function update(Request $request){
         $postFields = $request->all();
+
+        $validator = Validator::make($postFields,[
+           'id'=>'required',
+           'status'=>[
+               'required',
+               'status'=>Rule::in(config('enum.transactions.status'))
+           ]
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), Response::HTTP_BAD_REQUEST);
+        }
+
         $transaction = Transaction::query()->find($postFields['id']);
+
+        if($transaction == null){
+            return [
+                'errors'=>[
+                    'Transaction ID not Found'
+                ]
+            ];
+        }
 
         if($transaction->status == 'Approved'){
             return response()->json($transaction);
@@ -63,13 +93,15 @@ class TransactionController extends Controller{
 
         if($postFields['status'] == 'Approved'){
             if($transaction->type == 'Deposit'){
-                $transaction->wallet->balance = $transaction->wallet->balance + $transaction->amount;
+                $transaction->wallet->balance = $transaction->wallet->balance + ($transaction->amount * $transaction->currency->conversion_rate);
             }else{
                 //Withdraw
-                if($transaction->amount <= $transaction->wallet->balance){
-                    $transaction->wallet->balance = $transaction->wallet->balance - $transaction->amount;
+                if( ($transaction->amount * $transaction->currency->conversion_rate) <= $transaction->wallet->balance){
+                    $transaction->wallet->balance = $transaction->wallet->balance - ($transaction->amount * $transaction->currency->conversion_rate);
                 }else{
-                    return response()->json(['errors'=>'Transaction amount is higher than wallet amount']);
+                    return response()->json([
+                        'errors'=>'Transaction amount is higher than wallet amount'
+                    ]);
                 }
             }
             $transaction->status = 'Approved';

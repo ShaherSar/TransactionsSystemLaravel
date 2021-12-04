@@ -12,7 +12,7 @@ class WalletsTableSeeder extends Seeder{
      * @return void
      */
     public function run(){
-        DB::table('users')->insert([
+        DB::table('wallets')->insert([
             'balance' => 0,
             'user_id'=>1,
             'created_at' => now(),

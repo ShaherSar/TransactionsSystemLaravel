@@ -32,7 +32,11 @@ class AuthController extends Controller{
             ]);
         }
 
-        return $user->createToken($request->device_name)->plainTextToken;
+        return [
+            'success'=>1,
+            'user'=>$user,
+            'token'=>explode("|",$user->createToken($request->device_name)->plainTextToken)[1]
+        ];
     }
 
     public function register(RegisterRequest $request){

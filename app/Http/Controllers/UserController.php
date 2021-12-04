@@ -19,7 +19,7 @@ class UserController extends Controller{
         $postFields = $request->all();
 
         $validator = Validator::make($postFields,[
-           'id'=>'required',
+           'id'=>'required|integer',
             'status'=>[
                 'required',
                 Rule::in(config('enum.users.status'))
@@ -32,12 +32,9 @@ class UserController extends Controller{
 
         $user = User::query()->find($postFields['id']);
 
-        if($user->isNotEmpty()){
-            
-            $user->update([
-                'status'=>$postFields['status']
-            ]);
-
+        if($user != null){
+            $user->status = $postFields['status'];
+            $user->save();
             return response()->json($user);
         }
 

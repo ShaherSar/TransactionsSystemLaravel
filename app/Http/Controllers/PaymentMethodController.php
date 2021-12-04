@@ -58,7 +58,7 @@ class PaymentMethodController extends Controller{
     }
 
     public function show($id){
-        $paymentMethod = PaymentMethod::query()->with('currencies')->findOrFail($id);
+        $paymentMethod = PaymentMethod::query()->with('currencies')->find($id);
         return response()->json($paymentMethod);
     }
 }
