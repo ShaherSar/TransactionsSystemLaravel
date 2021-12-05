@@ -32,6 +32,7 @@ Route::middleware(['auth:sanctum','active'])->group(function (){
 
         Route::get('/transactions',['\App\Http\Controllers\TransactionController','index']);
         Route::post('/transactions/update',['\App\Http\Controllers\TransactionController','update']);
+        Route::get('/transactions/chart',['\App\Http\Controllers\TransactionController','chart']);
 
         Route::get('/users',['\App\Http\Controllers\UserController','index']);
         Route::post('/users/update',['\App\Http\Controllers\UserController','update']);

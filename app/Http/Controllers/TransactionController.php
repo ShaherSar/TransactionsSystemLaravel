@@ -6,13 +6,27 @@ use App\Models\PaymentMethod;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller{
 
+    public function chart(Request $request){
+        $response = array();
+            DB::table('transactions')
+            ->selectRaw("count(*) as count,DATE_FORMAT(created_at,'%Y-%m-%d') as date")
+            ->groupByRaw("DATE_FORMAT(created_at,'%Y-%m-%d')")
+            ->get()->map(function ($row) use (&$response){
+                $response['labels'][] = $row->date;
+                $response['data'][] = $row->count;
+            })
+            ->toArray();
+        return response()->json($response);
+    }
+
     public function index(Request $request){
-        $transactions = auth()->user()->wallet->transactions;
+        $transactions = Transaction::with(['wallet.user','currency'])->get();
         return response()->json($transactions);
     }
 
