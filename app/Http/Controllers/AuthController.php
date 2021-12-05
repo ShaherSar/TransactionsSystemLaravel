@@ -15,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller{
 
     public function show(Request $request){
-        $data = User::query()->with('wallet.transactions')->find(auth()->user()->id);
+        $data = User::query()->with('wallet.transactions.currency')->find(auth()->user()->id);
         return response()->json($data);
     }
 
@@ -31,7 +31,7 @@ class AuthController extends Controller{
                 ]
             ]);
         }
-        $user = User::query()->with('wallet.transactions')->find($user->id);
+        $user = User::query()->with('wallet.transactions.currency')->find($user->id);
         return [
             'success'=>1,
             'user'=>$user,

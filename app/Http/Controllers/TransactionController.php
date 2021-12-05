@@ -13,7 +13,10 @@ use Illuminate\Validation\Rule;
 class TransactionController extends Controller{
 
     public function chart(Request $request){
-        $response = array();
+        $response = array(
+            'labels'=>[],
+            'data'=>[]
+        );
             DB::table('transactions')
             ->selectRaw("count(*) as count,DATE_FORMAT(created_at,'%Y-%m-%d') as date")
             ->groupByRaw("DATE_FORMAT(created_at,'%Y-%m-%d')")
